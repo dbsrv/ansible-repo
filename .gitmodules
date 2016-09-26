@@ -1,0 +1,3 @@
+[submodule "roles/internal/ansible-mongodb-api"]
+	path = roles/internal/ansible-mongodb-api
+	url = https://github.com/dbsrv/ansible-mongodb-api.git
