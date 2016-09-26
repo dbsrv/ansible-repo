@@ -16,6 +16,7 @@
       mongodb_replication_replset: apitest
       
       ### Ops Manager variables ###
+      mongodb_install_mms_agent: false
       mongodb_mms_agent_pkg: http://phelmondbbi001:8080/download/agent/automation/mongodb-mms-automation-agent-manager-latest.x86_64.rpm
       mongodb_mms_group_id: 5759e525e4b088845ebcfabd
       mongodb_mms_api_key: 288b9b0024e33ba8d46c479295667c9e
