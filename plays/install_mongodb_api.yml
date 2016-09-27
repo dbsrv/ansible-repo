@@ -8,7 +8,7 @@
       ### (Quotes are not needed for variable values) ###
       
       ### MongoDB variables ###
-      mongodb_version: 3.2
+      mongodb_version: 3.2.9 # must specify minor version
       mongodb_user: mongod
       mongodb_net_port: 27600
       mongodb_storage_dbpath: /data/apitest
@@ -26,4 +26,6 @@
       mongodb_opsmgr_api_user: ansible@expedia.com
       mongodb_opsmgr_api_key: 56e59981-8a1e-48d1-8514-8cbc11dc282d
       
-      
+      ### Ansible variables ###
+      mongodb_master_node: "{{groups['mongo-master'][0]}}"
+
