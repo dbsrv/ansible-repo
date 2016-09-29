@@ -26,6 +26,6 @@
       mongodb_opsmgr_api_user: ansible@expedia.com
       mongodb_opsmgr_api_key: 56e59981-8a1e-48d1-8514-8cbc11dc282d
       
-      ### Ansible variables ###
+      ### Host to modify automation configuration ###
       mongodb_master_node: "{{groups['mongo-master'][0]}}"
 
