@@ -1,31 +1,29 @@
 - name: mongodb
-  hosts: mongo
+  hosts: "{{ cluster_name }}_master, {{ cluster_name }}_replicas"
   become: yes
   gather_facts: yes
   roles:
-    - ansible-mongodb-api
+    - mongodb-api
   vars:
-      ### (Quotes are not needed for variable values) ###
-      
       ### MongoDB variables ###
       mongodb_version: 3.2.9 # must specify minor version
       mongodb_user: mongod
       mongodb_net_port: 27600
       mongodb_storage_dbpath: /data/apitest
       mongodb_systemlog_path: /data/apitest/log/mongod.log
-      mongodb_replication_replset: apitest
-      
+      mongodb_replication_replset: {{ cluster_name }}
+
       ### Ops Manager variables ###
-      mongodb_install_mms_agent: false
-      mongodb_mms_agent_pkg: http://phelmondbbi001:8080/download/agent/automation/mongodb-mms-automation-agent-manager-latest.x86_64.rpm
+      mongodb_install_mms_agent: true
+      mongodb_mms_agent_pkg: http://10.208.72.125:8080/download/agent/automation/mongodb-mms-automation-agent-manager-latest.x86_64.rpm
       mongodb_mms_group_id: 5759e525e4b088845ebcfabd
       mongodb_mms_api_key: 288b9b0024e33ba8d46c479295667c9e
-      mongodb_mms_base_url: http://phelmondbbi001:8080
-      
+      mongodb_mms_base_url: http://10.208.72.125:8080
+
       ### Ops Manager API variables ###
       mongodb_opsmgr_api_user: ansible@expedia.com
       mongodb_opsmgr_api_key: 56e59981-8a1e-48d1-8514-8cbc11dc282d
-      
+
       ### Host to modify automation configuration ###
-      mongodb_master_node: "{{groups['mongo-master'][0]}}"
+      mongodb_master_node: "{{groups['{{ cluster_name }}_master'][0]}}"
 

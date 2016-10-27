@@ -1,0 +1,58 @@
+---
+  - name: Provision an EC2 Instance
+    hosts: local
+    connection: local
+
+    # Necessary Variables for creating/provisioning the EC2 Instance
+    vars:
+      instance_type: t2.micro
+      security_group: mongodb # Change the security group name here
+      image: ami-7172b611 # Change the AMI, from which you want to launch the server
+      region: us-west-2 # Change the Region
+      keypair: ansible # Change the keypair name
+      count: 1
+
+    # Task that will be used to Launch/Create an EC2 Instance
+    tasks:
+
+      - name: Create a security group
+        local_action:
+          module: ec2_group
+          name: "{{ security_group }}"
+          description: Security Group for webserver Servers
+          region: "{{ region }}"
+          vpc_id: vpc-e5588581
+
+          rules:
+            - proto: tcp
+              from_port: 22
+              to_port: 22
+              cidr_ip: 0.0.0.0/0
+            - proto: tcp
+              from_port: 80
+              to_port: 80
+              cidr_ip: 0.0.0.0/0
+          rules_egress:
+            - proto: all
+              cidr_ip: 0.0.0.0/0
+
+
+      - name: Launch the new EC2 Instance
+        local_action: ec2
+                      group={{ security_group }}
+                      instance_type={{ instance_type}}
+                      image={{ image }}
+                      wait=true
+                      region={{ region }}
+                      keypair={{ keypair }}
+                      count={{count}}
+                      vpc_subnet_id=subnet-06223c5f
+        register: ec2
+
+      - name: Add tag to Instance(s)
+        local_action: ec2_tag resource={{ item.id }} region={{ region }} state=present
+        with_items: ec2.instances
+        args:
+          tags:
+            Name: ansible_server
+
