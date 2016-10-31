@@ -3,7 +3,7 @@
   become: yes
   gather_facts: yes
   roles:
-    - mongodb-api
+    - ansible-mongodb-api
   vars:
       ### MongoDB variables ###
       mongodb_version: 3.2.9 # must specify minor version

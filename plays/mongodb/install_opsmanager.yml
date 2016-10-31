@@ -1,0 +1,5 @@
+- name: mongodb
+  hosts: opsmanager
+  become: yes
+  roles:
+    - ansible-ops-manager

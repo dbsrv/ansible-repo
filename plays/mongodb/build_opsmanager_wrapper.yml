@@ -1,0 +1,6 @@
+---
+
+- include: ec2_launch_opsmanager.yml
+- include: install_opsmanager.yml
+
+
