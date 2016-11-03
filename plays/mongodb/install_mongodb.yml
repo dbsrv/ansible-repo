@@ -1,0 +1,33 @@
+- name: mongodb
+  hosts: "{{ cluster_name }}_master,{{ cluster_name }}_replicas"
+  become: yes
+  gather_facts: yes
+  pre_tasks:
+    - name: install the latest version of java-1.8
+      yum: name=java-1.8.0-openjdk state=latest
+    - name: correct java version selected
+      alternatives: name=java link=/usr/bin/java path=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.101-3.b13.24.amzn1.x86_64/jre/bin/java
+
+  roles:
+    - ansible-mongodb
+  vars:
+        mongodb_version: "3.2"
+        mongodb_replication_replset: mongo-rs
+        mongodb_processmanagement_fork: true
+        mongodb_users:
+          - {
+            name: testUser,
+            password: passw0rd,
+            roles: readWrite,
+            database: app_development
+         }
+
+      # mongodb_replication_params should be configured on each replica set node
+        mongodb_login_host: "{{ hostvars[groups['{{ cluster_name }}_master'][0]]['ansible_eth0']['ipv4']['address'] }}"
+        mongodb_replication_params:
+          - { host_name: "{{ hostvars[groups['{{ cluster_name }}_master'][0]]['ansible_eth0']['ipv4']['address'] }}", host_port: "{{ mongodb_net_port }}", host_type: replica }
+          - { host_name: "{{ hostvars[groups['{{ cluster_name }}_replicas'][0]]['ansible_eth0']['ipv4']['address'] }}", host_port: "{{ mongodb_net_port }}", host_type: replica }
+          - { host_name: "{{ hostvars[groups['{{ cluster_name }}_replicas'][1]]['ansible_eth0']['ipv4']['address'] }}", host_port: "{{ mongodb_net_port }}", host_type: replica }
+      # host_type can be replica(default) and arbiter
+
+

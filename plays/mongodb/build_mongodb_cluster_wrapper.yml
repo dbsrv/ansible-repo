@@ -3,6 +3,6 @@
 - include: ec2_launch_mongodb_master.yml
 #- include: create_mongodb_mount_points.yml
 - include: ec2_launch_mongodb_replicas.yml
-- include: install_mongodb_api.yml
+- include: install_mongodb.yml
 
 
