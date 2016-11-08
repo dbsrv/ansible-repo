@@ -1,5 +1,5 @@
 - name: mongodb
-  hosts: "{{ cluster_name }}_master,{{ cluster_name }}_replicas"
+  hosts: "{{ cluster_name }}_mongo"
   become: yes
   gather_facts: yes
   pre_tasks:
@@ -23,11 +23,22 @@
          }
 
       # mongodb_replication_params should be configured on each replica set node
-        mongodb_login_host: "{{ hostvars[groups['{{ cluster_name }}_master'][0]]['ansible_eth0']['ipv4']['address'] }}"
-        mongodb_replication_params:
-          - { host_name: "{{ hostvars[groups['{{ cluster_name }}_master'][0]]['ansible_eth0']['ipv4']['address'] }}", host_port: "{{ mongodb_net_port }}", host_type: replica }
-          - { host_name: "{{ hostvars[groups['{{ cluster_name }}_replicas'][0]]['ansible_eth0']['ipv4']['address'] }}", host_port: "{{ mongodb_net_port }}", host_type: replica }
-          - { host_name: "{{ hostvars[groups['{{ cluster_name }}_replicas'][1]]['ansible_eth0']['ipv4']['address'] }}", host_port: "{{ mongodb_net_port }}", host_type: replica }
       # host_type can be replica(default) and arbiter
+#        mongodb_replication_params: |
+#          {% for host in groups['icemongo_mongo'] %}
+#            - { hostname: "{{ hostvars[host]['ansible_eth0']['ipv4']['address'] }}", host_port: "{{ mongodb_net_port }}", host_type: replica }
+#          {% endfor %}
 
+        mongodb_replication_params: |
+          {% set comma = joiner(',') %}
+          {% for host in groups['icemongo_mongo'] -%}
+            {{ comma() }}{{ hostvars[host].ansible_default_ipv4.address}}
+          {%- endfor -%}
+
+      # mongodb_login_host: "{{ mongodb_replication_params[0]['hostname'] }}"
+
+        mongodb_replication_params2:
+          - { host_name: "{{ hostvars[groups['icemongo_mongo'][0]]['ansible_eth0']['ipv4']['address'] }}", host_port: "{{ mongodb_net_port }}", host_type: replica }
+          - { host_name: "{{ hostvars[groups['icemongo_mongo'][1]]['ansible_eth0']['ipv4']['address'] }}", host_port: "{{ mongodb_net_port }}", host_type: replica }
+          - { host_name: "{{ hostvars[groups['icemongo_mongo'][2]]['ansible_eth0']['ipv4']['address'] }}", host_port: "{{ mongodb_net_port }}", host_type: replica }
 
