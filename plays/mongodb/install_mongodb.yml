@@ -22,23 +22,7 @@
             database: app_development
          }
 
-      # mongodb_replication_params should be configured on each replica set node
-      # host_type can be replica(default) and arbiter
-#        mongodb_replication_params: |
-#          {% for host in groups['icemongo_mongo'] %}
-#            - { hostname: "{{ hostvars[host]['ansible_eth0']['ipv4']['address'] }}", host_port: "{{ mongodb_net_port }}", host_type: replica }
-#          {% endfor %}
+        mongodb_replication_params: "{{ groups['icemongo_mongo']|map('extract', hostvars, ['ansible_eth0','ipv4', 'address']) |list }}" 
+      # mongodb_replication_params collect list of hosts, additional params (e.g. host_port, host_type) are defined from variables in hosts file
 
-        mongodb_replication_params: |
-          {% set comma = joiner(',') %}
-          {% for host in groups['icemongo_mongo'] -%}
-            {{ comma() }}{{ hostvars[host].ansible_default_ipv4.address}}
-          {%- endfor -%}
-
-      # mongodb_login_host: "{{ mongodb_replication_params[0]['hostname'] }}"
-
-        mongodb_replication_params2:
-          - { host_name: "{{ hostvars[groups['icemongo_mongo'][0]]['ansible_eth0']['ipv4']['address'] }}", host_port: "{{ mongodb_net_port }}", host_type: replica }
-          - { host_name: "{{ hostvars[groups['icemongo_mongo'][1]]['ansible_eth0']['ipv4']['address'] }}", host_port: "{{ mongodb_net_port }}", host_type: replica }
-          - { host_name: "{{ hostvars[groups['icemongo_mongo'][2]]['ansible_eth0']['ipv4']['address'] }}", host_port: "{{ mongodb_net_port }}", host_type: replica }
-
+        mongodb_login_host: "{{ mongodb_replication_params[0] }}"
