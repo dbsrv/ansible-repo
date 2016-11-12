@@ -1,4 +1,4 @@
-- name: mongodb
+- name: Test Linux system optimization
   hosts: "mongo_master, mongo_replicas"
   become: yes
   gather_facts: yes

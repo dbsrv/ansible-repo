@@ -13,7 +13,6 @@
   vars:
         mongodb_version: "3.2"
         mongodb_replication_replset: mongo-rs
-        mongodb_processmanagement_fork: true
         mongodb_users:
           - {
             name: testUser,
@@ -21,8 +20,3 @@
             roles: readWrite,
             database: app_development
          }
-
-        mongodb_replication_params: "{{ groups['icemongo_mongo']|map('extract', hostvars, ['ansible_eth0','ipv4', 'address']) |list }}" 
-      # mongodb_replication_params collect list of hosts, additional params (e.g. host_port, host_type) are defined from variables in hosts file
-
-        mongodb_login_host: "{{ mongodb_replication_params[0] }}"
